@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingCart, Plus, Minus, X, Bell, Check, Clock, ChefHat, Users } from 'lucide-react';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+// import CategoryPage from "./categorypage"; // Make sure this exists
+// FIX: Update the import path to match the actual file name, e.g.:
+import CategoryPage from "./categorypage";
 import './App.css';
 
 // Backend API base URL
@@ -67,6 +71,42 @@ type CartItem = {
   price: number;
   quantity: number;
 };
+
+// Add your category images to the /public or /assets folder and update the paths below
+const categories = [
+  { name: "Ice-Cream", image: "/images/icecream.png" },
+  { name: "Butter Milk", image: "/images/buttermilk.png" },
+  { name: "Lassi", image: "/images/lassi.png" },
+  { name: "Snacks", image: "/images/snacks.png" },
+  { name: "Maggie", image: "/images/maggie.png" },
+  { name: "Sizzling Brownie", image: "/images/brownie.png" },
+  { name: "Combo Offer", image: "/images/combo.png" },
+];
+
+const groupedCategories = [
+  {
+    group: "Drinks",
+    categories: [
+      { name: "Butter Milk", image: "/images/buttermilk.png" },
+      { name: "Lassi", image: "/images/lassi.png" },
+    ],
+  },
+  {
+    group: "Desserts",
+    categories: [
+      { name: "Ice-Cream", image: "/images/icecream.png" },
+      { name: "Sizzling Brownie", image: "/images/brownie.png" },
+    ],
+  },
+  {
+    group: "Snacks",
+    categories: [
+      { name: "Snacks", image: "/images/snacks.png" },
+      { name: "Maggie", image: "/images/maggie.png" },
+      { name: "Combo Offer", image: "/images/combo.png" },
+    ],
+  },
+];
 
 const App = () => {
   const [currentView, setCurrentView] = useState('customer'); // 'customer' or 'chef'
@@ -300,7 +340,63 @@ const App = () => {
     </div>
   );
 
-  return currentView === 'customer' ? <CustomerView /> : <ChefView />;
+  // HomePage component
+  const HomePage = () => {
+    const navigate = useNavigate();
+
+    const handleCategoryClick = (categoryName: string) => {
+      navigate(`/category/${encodeURIComponent(categoryName)}`);
+    };
+
+    return (
+      <div>
+        <h1 style={{ textAlign: "center", margin: "32px 0 24px 0" }}>Menu Categories</h1>
+        {groupedCategories.map((group) => (
+          <div key={group.group} style={{ marginBottom: 40 }}>
+            <h2 style={{ marginLeft: 32 }}>{group.group}</h2>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "2rem", justifyContent: "center", marginTop: 20 }}>
+              {group.categories.map((cat) => (
+                <div
+                  key={cat.name}
+                  onClick={() => handleCategoryClick(cat.name)}
+                  style={{
+                    cursor: "pointer",
+                    textAlign: "center",
+                    width: 140,
+                    border: "1px solid #eee",
+                    borderRadius: 12,
+                    padding: 16,
+                    boxShadow: "0 2px 8px #eee",
+                    background: "#fff",
+                    transition: "transform 0.2s",
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.05)")}
+                  onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
+                >
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    style={{ width: 80, height: 80, objectFit: "contain", marginBottom: 8 }}
+                  />
+                  <div style={{ fontWeight: "bold" }}>{cat.name}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/category/:categoryName" element={<CategoryPage />} />
+        {/* Add other routes as needed */}
+      </Routes>
+    </Router>
+  );
 };
 
 export default App;

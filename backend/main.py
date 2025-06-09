@@ -1,5 +1,5 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Depends, HTTPException, status, Request
-from backend.routes import menu, cart, order, admin
+from routes import menu, cart, order, admin
 from fastapi.middleware.cors import CORSMiddleware
 from backend import database, models
 from backend.utils.websocket import manager
