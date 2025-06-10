@@ -170,6 +170,7 @@ function HomePage() {
   const [showShakeItems, setShowShakeItems] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [showLogo, setShowLogo] = useState(true);
+  const [showThanksPopup, setShowThanksPopup] = useState(false);
 
   useEffect(() => {
     // Hold the logo for 5 seconds, then show the homepage
@@ -332,13 +333,16 @@ const handleAddShake = (item) => {
   };
 
   const handlePlaceOrder = () => {
-    alert(
-      `Order placed!\nName: ${orderDetails.name}\nPhone: ${orderDetails.phone}\nTable: ${orderDetails.table}\nTotal: ₹${grandTotal}`
-    );
+    setOrderDetails(prev => ({
+      ...prev,
+      lastCart: Object.entries(cart),
+      lastTotal: grandTotal,
+    }));
     setCart({});
     setOrderDetails({ name: "", phone: "", table: "" });
     setCartOpen(false);
-    setOrderPlaced(true); // Show follow/rate links
+    setOrderPlaced(true);
+    setShowThanksPopup(true);
   };
 
   // Calculate grand total
@@ -1127,6 +1131,96 @@ const handleAddShake = (item) => {
           ))
         )}
       </div>
+      {showThanksPopup && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0,0,0,0.5)",
+            zIndex: 20000,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <div
+            style={{
+              background: "#fff",
+              borderRadius: 16,
+              padding: 32,
+              maxWidth: 340,
+              width: "90vw",
+              textAlign: "center",
+              boxShadow: "0 4px 24px #0002",
+            }}
+          >
+            <h2 style={{ margin: "0 0 16px 0" }}>Thank You!</h2>
+            <div style={{ marginBottom: 18 }}>
+              <span style={{ fontWeight: "bold" }}>Order Details:</span>
+              <div style={{ marginTop: 8, marginBottom: 8, fontSize: 15 }}>
+                <div><b>Name:</b> {orderDetails.name}</div>
+                <div><b>Phone:</b> {orderDetails.phone}</div>
+                <div><b>Table:</b> {orderDetails.table}</div>
+                <div style={{ marginTop: 8, fontWeight: "bold" }}>
+                  Total Amount: ₹{orderDetails.lastTotal || grandTotal}
+                </div>
+              </div>
+              <div style={{ marginTop: 8, marginBottom: 8, fontSize: 15, textAlign: "left" }}>
+                <div style={{ fontWeight: "bold", marginBottom: 4 }}>Ordered Items:</div>
+                <ul style={{ paddingLeft: 18, margin: 0 }}>
+                  {(orderDetails.lastCart || Object.entries(cart)).length > 0
+                    ? (orderDetails.lastCart || Object.entries(cart)).map(([item, qty]) => (
+                        <li key={item}>
+                          {item} <span style={{ color: "#888" }}>x{qty}</span>
+                        </li>
+                      ))
+                    : <li>No items</li>
+                  }
+                </ul>
+              </div>
+            </div>
+            <div style={{ marginBottom: 18 }}>
+              <span>Follow us on Instagram:</span>
+              <br />
+              <a
+                href="https://www.instagram.com/mocktail.lounge1?igsh=MW53czl2MDZ1MzR5aA=="
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#E1306C", fontWeight: "bold", textDecoration: "none" }}
+              >
+                @mocktail.lounge1
+              </a>
+            </div>
+            <div style={{ marginBottom: 18 }}>
+              <span>Rate us:</span>
+              <br />
+              <a
+                href="https://surl.li/bcmhsj"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#007bff", fontWeight: "bold", textDecoration: "none" }}
+              >
+                Google Review
+              </a>
+            </div>
+            <button
+              onClick={() => setShowThanksPopup(false)}
+              style={{
+                marginTop: 8,
+                background: "#007bff",
+                color: "#fff",
+                border: "none",
+                borderRadius: 6,
+                padding: "8px 18px",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
