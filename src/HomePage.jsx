@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ShoppingCart, Plus, Minus, X } from "lucide-react";
 
@@ -14,8 +14,8 @@ const categories = [
   { name: "Tea Items", image: "/images/tea.png" },
   { name: "Soda", image: "/images/soda.png" },
   { name: "Matka Beverages", image: "/images/Matka Beverages.png" },
-  { name: "Summer Special", image: "/images/Summer Special.png" },
-  { name: "Combo Offer", image: "/images/combo.png" },
+  { name: "Special Dessert Item", image: "/images/Dessert.png" }, 
+  { name: "Combo Offer", image: "/images/combo.png" },// <-- changed name here
 ];
 
 // Ice-Cream flavors and prices
@@ -45,18 +45,21 @@ const lassiFlavors = [
 const snacksItems = [
   { name: "French Fries Small", price: 59 },
   { name: "French Fries Large", price: 99 },
-  { name: "Veg Steamed Momos", price: 79 },
+  { name: "Egg Kulfi", price: 49 },
+  { name: "Veg Spring Rolls", price: 99 },
+  { name: "Chicken Spring Rolls", price: 99 },
+  { name: "Chicken PopCorns", price: 99 },
   { name: "Veg Fried Momos", price: 89 },
-  { name: "Paneer Steamed Momos", price: 89 },
   { name: "Paneer Fried Momos", price: 99 },
-  { name: "Chicken Steamed Momos", price: 99 },
   { name: "Chicken Nuggets", price: 99 },
   { name: "Chicken Fried Momos", price: 119 },
 ];
 
 const maggieItems = [
   { name: "Veg Maggie", price: 49 },
+  { name: "Veg Fried Maggie", price: 59 },
   { name: "Egg Maggie", price: 59 },
+  { name: "Egg Fried Maggie", price: 69 }, 
 ];
 
 const sizzlingBrownieItems = [
@@ -107,12 +110,11 @@ const matkaBeverages = [
   { name: "Matka Classic Butter Milk", price: 49 },
   { name: "Matka Masala Butter Milk", price: 49 },
   { name: "Matka Sweet Lassi", price: 49 },
-  { name: "Milk Sarbath", price: 69 },
 ];
 
-// Summer Special
-const summerSpecials = [
-  { name: "Milk Sarbath", price: 69 },
+// Summer Special (now Special Dessert Item)
+const specialDessertItems = [
+  { name: "Icecream With Gulabjamun", price: 59 },
 ];
 
 // Mocktails
@@ -121,7 +123,6 @@ const mocktailItems = [
   { name: "Classic Lemonade", price: 49 },
   { name: "Blue Curacao", price: 59 },
   { name: "Water Melon", price: 59 },
-  { name: "Green Apple", price: 59 },
   { name: "Strawberry", price: 59 },
   { name: "Virgin Mocktail", price: 59 },
   { name: "Kala Katta", price: 59 },
@@ -164,10 +165,17 @@ function HomePage() {
   const [showTeaItems, setShowTeaItems] = useState(false);
   const [showSodaItems, setShowSodaItems] = useState(false);
   const [showMatkaBeverages, setShowMatkaBeverages] = useState(false);
-  const [showSummerSpecials, setShowSummerSpecials] = useState(false);
+  const [showSpecialDessertItems, setShowSpecialDessertItems] = useState(false);
   const [showMocktailItems, setShowMocktailItems] = useState(false);
   const [showShakeItems, setShowShakeItems] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [showLogo, setShowLogo] = useState(true);
+
+  useEffect(() => {
+    // Hold the logo for 5 seconds, then show the homepage
+    const timer = setTimeout(() => setShowLogo(false), 5000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleCategoryClick = (categoryName) => {
     setShowIceCreamFlavors(false);
@@ -180,7 +188,7 @@ function HomePage() {
     setShowTeaItems(false);
     setShowSodaItems(false);
     setShowMatkaBeverages(false);
-    setShowSummerSpecials(false);
+    setShowSpecialDessertItems(false);
     setShowMocktailItems(false);
     setShowShakeItems(false);
 
@@ -204,8 +212,8 @@ function HomePage() {
       setShowSodaItems(true);
     } else if (categoryName === "Matka Beverages") {
       setShowMatkaBeverages(true);
-    } else if (categoryName === "Summer Special") {
-      setShowSummerSpecials(true);
+    } else if (categoryName === "Special Dessert Item") { // <-- changed here
+      setShowSpecialDessertItems(true);
     } else if (categoryName === "Mocktails") {
       setShowMocktailItems(true);
     } else if (categoryName === "Shakes") {
@@ -346,7 +354,7 @@ const handleAddShake = (item) => {
       teaItems.find((f) => f.name === item) ||
       sodaItems.find((f) => f.name === item) ||
       matkaBeverages.find((f) => f.name === item) ||
-      summerSpecials.find((f) => f.name === item) ||
+      specialDessertItems.find((f) => f.name === item) ||
       mocktailItems.find((f) => f.name === item) ||
       shakeItems.find((f) => f.name === item);
     const price = flavor ? flavor.price : prices[item] || 0;
@@ -355,6 +363,38 @@ const handleAddShake = (item) => {
 
   return (
     <div>
+      {/* Logo Overlay (no blink, just hold for 5s then fade out) */}
+      {showLogo && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "#fff",
+            zIndex: 9999,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            animation: "fadeOut 1s linear 4s forwards", // fade out after 4s, gone at 5s
+            transition: "opacity 1s",
+          }}
+        >
+          <img
+            src="/logo.png"
+            alt="Logo"
+            style={{
+              width: 120,
+              height: 120,
+            }}
+          />
+          <style>
+            {`
+              @keyframes fadeOut {
+                to { opacity: 0; visibility: hidden; }
+              }
+            `}
+          </style>
+        </div>
+      )}
       {/* Cart Icon at the top right corner (scrolls with page) */}
       <div style={{
         position: "absolute", // <-- Change from "fixed" to "absolute"
@@ -396,18 +436,23 @@ const handleAddShake = (item) => {
         </button>
         {/* Dropdown Cart */}
         {cartOpen && (
-          <div style={{
-            position: "absolute",
-            top: 48,
-            right: 0,
-            width: 340,
-            background: "#fff",
-            border: "1px solid #ddd",
-            borderRadius: 12,
-            boxShadow: "0 4px 24px #0001",
-            zIndex: 100,
-            padding: 24
-          }}>
+          <div
+            style={{
+              position: "absolute",
+              top: 48,
+              right: 0,
+              width: 340,
+              maxWidth: "95vw",
+              background: "#fff",
+              border: "1px solid #ddd",
+              borderRadius: 12,
+              boxShadow: "0 4px 24px #0001",
+              zIndex: 100,
+              padding: 24,
+              margin: "0 auto",
+            }}
+            className="cart-dropdown"
+          >
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <h3 style={{ margin: 0 }}>Your Cart</h3>
               <button onClick={() => setCartOpen(false)} style={{ background: "none", border: "none", cursor: "pointer" }}>
@@ -448,7 +493,7 @@ const handleAddShake = (item) => {
                     teaItems.find((f) => f.name === item) ||
                     sodaItems.find((f) => f.name === item) ||
                     matkaBeverages.find((f) => f.name === item) ||
-                    summerSpecials.find((f) => f.name === item) ||
+                    specialDessertItems.find((f) => f.name === item) ||
                     mocktailItems.find((f) => f.name === item) ||
                     shakeItems.find((f) => f.name === item);
                   const price = flavor ? flavor.price : 0;
@@ -534,10 +579,10 @@ const handleAddShake = (item) => {
       <h1 style={{ textAlign: "center", margin: "32px 0 24px 0" }}>Menu Categories</h1>
       <div style={{ display: "flex", flexWrap: "wrap", gap: "2rem", justifyContent: "center", marginTop: 20 }}>
         {showIceCreamFlavors ? (
-          <div style={{ width: "100%", maxWidth: 400 }}>
-            <h2>Ice-Cream Flavors</h2>
+          <div style={{ width: "100%", maxWidth: 320, padding: "8px 0" }}>
+            <h2 style={{ fontSize: 20, marginBottom: 12 }}>Ice-Cream Flavors</h2>
             {iceCreamFlavors.map((flavor) => (
-              <div key={flavor.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "12px 0", borderBottom: "1px solid #eee", paddingBottom: 8 }}>
+              <div key={flavor.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0", borderBottom: "1px solid #eee", paddingBottom: 6, fontSize: 15 }}>
                 <span>{flavor.name} <span style={{ color: "#888" }}>₹{flavor.price}</span></span>
                 <button
                   onClick={() => handleAddIceCream(flavor)}
@@ -546,37 +591,38 @@ const handleAddShake = (item) => {
                     background: "#007bff",
                     color: "#fff",
                     borderRadius: "50%",
-                    width: 32,
-                    height: 32,
+                    width: 28,
+                    height: 28,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
                   }}
                 >
-                  <Plus size={20} />
+                  <Plus size={16} />
                 </button>
               </div>
             ))}
             <button
               onClick={() => setShowIceCreamFlavors(false)}
               style={{
-                marginTop: 16,
+                marginTop: 12,
                 background: "#eee",
                 border: "none",
                 borderRadius: 6,
-                padding: "8px 16px",
-                cursor: "pointer"
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontSize: 14
               }}
             >
               Back to Categories
             </button>
           </div>
         ) : showButtermilkFlavors ? (
-          <div style={{ width: "100%", maxWidth: 400 }}>
-            <h2>Buttermilk Flavors</h2>
+          <div style={{ width: "100%", maxWidth: 320, padding: "8px 0" }}>
+            <h2 style={{ fontSize: 20, marginBottom: 12 }}>Buttermilk Flavors</h2>
             {buttermilkFlavors.map((flavor) => (
-              <div key={flavor.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "12px 0", borderBottom: "1px solid #eee", paddingBottom: 8 }}>
+              <div key={flavor.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0", borderBottom: "1px solid #eee", paddingBottom: 6, fontSize: 15 }}>
                 <span>{flavor.name} <span style={{ color: "#888" }}>₹{flavor.price}</span></span>
                 <button
                   onClick={() => handleAddButtermilk(flavor)}
@@ -585,37 +631,38 @@ const handleAddShake = (item) => {
                     background: "#007bff",
                     color: "#fff",
                     borderRadius: "50%",
-                    width: 32,
-                    height: 32,
+                    width: 28,
+                    height: 28,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
                   }}
                 >
-                  <Plus size={20} />
+                  <Plus size={16} />
                 </button>
               </div>
             ))}
             <button
               onClick={() => setShowButtermilkFlavors(false)}
               style={{
-                marginTop: 16,
+                marginTop: 12,
                 background: "#eee",
                 border: "none",
                 borderRadius: 6,
-                padding: "8px 16px",
-                cursor: "pointer"
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontSize: 14
               }}
             >
               Back to Categories
             </button>
           </div>
         ) : showLassiFlavors ? (
-          <div style={{ width: "100%", maxWidth: 400 }}>
-            <h2>Lassi Flavors</h2>
+          <div style={{ width: "100%", maxWidth: 320, padding: "8px 0" }}>
+            <h2 style={{ fontSize: 20, marginBottom: 12 }}>Lassi Flavors</h2>
             {lassiFlavors.map((flavor) => (
-              <div key={flavor.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "12px 0", borderBottom: "1px solid #eee", paddingBottom: 8 }}>
+              <div key={flavor.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0", borderBottom: "1px solid #eee", paddingBottom: 6, fontSize: 15 }}>
                 <span>{flavor.name} <span style={{ color: "#888" }}>₹{flavor.price}</span></span>
                 <button
                   onClick={() => handleAddLassi(flavor)}
@@ -624,37 +671,38 @@ const handleAddShake = (item) => {
                     background: "#007bff",
                     color: "#fff",
                     borderRadius: "50%",
-                    width: 32,
-                    height: 32,
+                    width: 28,
+                    height: 28,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
                   }}
                 >
-                  <Plus size={20} />
+                  <Plus size={16} />
                 </button>
               </div>
             ))}
             <button
               onClick={() => setShowLassiFlavors(false)}
               style={{
-                marginTop: 16,
+                marginTop: 12,
                 background: "#eee",
                 border: "none",
                 borderRadius: 6,
-                padding: "8px 16px",
-                cursor: "pointer"
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontSize: 14
               }}
             >
               Back to Categories
             </button>
           </div>
         ) : showSnacksItems ? (
-          <div style={{ width: "100%", maxWidth: 400 }}>
-            <h2>Snacks</h2>
+          <div style={{ width: "100%", maxWidth: 320, padding: "8px 0" }}>
+            <h2 style={{ fontSize: 20, marginBottom: 12 }}>Snacks</h2>
             {snacksItems.map((item) => (
-              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "12px 0", borderBottom: "1px solid #eee", paddingBottom: 8 }}>
+              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0", borderBottom: "1px solid #eee", paddingBottom: 6, fontSize: 15 }}>
                 <span>{item.name} <span style={{ color: "#888" }}>₹{item.price}</span></span>
                 <button
                   onClick={() => handleAddSnacks(item)}
@@ -663,37 +711,38 @@ const handleAddShake = (item) => {
                     background: "#007bff",
                     color: "#fff",
                     borderRadius: "50%",
-                    width: 32,
-                    height: 32,
+                    width: 28,
+                    height: 28,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
                   }}
                 >
-                  <Plus size={20} />
+                  <Plus size={16} />
                 </button>
               </div>
             ))}
             <button
               onClick={() => setShowSnacksItems(false)}
               style={{
-                marginTop: 16,
+                marginTop: 12,
                 background: "#eee",
                 border: "none",
                 borderRadius: 6,
-                padding: "8px 16px",
-                cursor: "pointer"
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontSize: 14
               }}
             >
               Back to Categories
             </button>
           </div>
         ) : showMaggieItems ? (
-          <div style={{ width: "100%", maxWidth: 400 }}>
-            <h2>Maggie</h2>
+          <div style={{ width: "100%", maxWidth: 320, padding: "8px 0" }}>
+            <h2 style={{ fontSize: 20, marginBottom: 12 }}>Maggie</h2>
             {maggieItems.map((item) => (
-              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "12px 0", borderBottom: "1px solid #eee", paddingBottom: 8 }}>
+              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0", borderBottom: "1px solid #eee", paddingBottom: 6, fontSize: 15 }}>
                 <span>{item.name} <span style={{ color: "#888" }}>₹{item.price}</span></span>
                 <button
                   onClick={() => handleAddMaggie(item)}
@@ -702,37 +751,38 @@ const handleAddShake = (item) => {
                     background: "#007bff",
                     color: "#fff",
                     borderRadius: "50%",
-                    width: 32,
-                    height: 32,
+                    width: 28,
+                    height: 28,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
                   }}
                 >
-                  <Plus size={20} />
+                  <Plus size={16} />
                 </button>
               </div>
             ))}
             <button
               onClick={() => setShowMaggieItems(false)}
               style={{
-                marginTop: 16,
+                marginTop: 12,
                 background: "#eee",
                 border: "none",
                 borderRadius: 6,
-                padding: "8px 16px",
-                cursor: "pointer"
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontSize: 14
               }}
             >
               Back to Categories
             </button>
           </div>
         ) : showSizzlingBrownieItems ? (
-          <div style={{ width: "100%", maxWidth: 400 }}>
-            <h2>Sizzling Brownie</h2>
+          <div style={{ width: "100%", maxWidth: 320, padding: "8px 0" }}>
+            <h2 style={{ fontSize: 20, marginBottom: 12 }}>Sizzling Brownie</h2>
             {sizzlingBrownieItems.map((item) => (
-              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "12px 0", borderBottom: "1px solid #eee", paddingBottom: 8 }}>
+              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0", borderBottom: "1px solid #eee", paddingBottom: 6, fontSize: 15 }}>
                 <span>{item.name} <span style={{ color: "#888" }}>₹{item.price}</span></span>
                 <button
                   onClick={() => handleAddSizzlingBrownie(item)}
@@ -741,37 +791,38 @@ const handleAddShake = (item) => {
                     background: "#007bff",
                     color: "#fff",
                     borderRadius: "50%",
-                    width: 32,
-                    height: 32,
+                    width: 28,
+                    height: 28,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
                   }}
                 >
-                  <Plus size={20} />
+                  <Plus size={16} />
                 </button>
               </div>
             ))}
             <button
               onClick={() => setShowSizzlingBrownieItems(false)}
               style={{
-                marginTop: 16,
+                marginTop: 12,
                 background: "#eee",
                 border: "none",
                 borderRadius: 6,
-                padding: "8px 16px",
-                cursor: "pointer"
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontSize: 14
               }}
             >
               Back to Categories
             </button>
           </div>
         ) : showComboOfferItems ? (
-          <div style={{ width: "100%", maxWidth: 400 }}>
-            <h2>Combo Offers</h2>
+          <div style={{ width: "100%", maxWidth: 320, padding: "8px 0" }}>
+            <h2 style={{ fontSize: 20, marginBottom: 12 }}>Combo Offers</h2>
             {comboOfferItems.map((item) => (
-              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "12px 0", borderBottom: "1px solid #eee", paddingBottom: 8 }}>
+              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0", borderBottom: "1px solid #eee", paddingBottom: 6, fontSize: 15 }}>
                 <span>{item.name} <span style={{ color: "#888" }}>₹{item.price}</span></span>
                 <button
                   onClick={() => handleAddComboOffer(item)}
@@ -780,37 +831,38 @@ const handleAddShake = (item) => {
                     background: "#007bff",
                     color: "#fff",
                     borderRadius: "50%",
-                    width: 32,
-                    height: 32,
+                    width: 28,
+                    height: 28,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
                   }}
                 >
-                  <Plus size={20} />
+                  <Plus size={16} />
                 </button>
               </div>
             ))}
             <button
               onClick={() => setShowComboOfferItems(false)}
               style={{
-                marginTop: 16,
+                marginTop: 12,
                 background: "#eee",
                 border: "none",
                 borderRadius: 6,
-                padding: "8px 16px",
-                cursor: "pointer"
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontSize: 14
               }}
             >
               Back to Categories
             </button>
           </div>
         ) : showTeaItems ? (
-          <div style={{ width: "100%", maxWidth: 400 }}>
-            <h2>Tea Items</h2>
+          <div style={{ width: "100%", maxWidth: 320, padding: "8px 0" }}>
+            <h2 style={{ fontSize: 20, marginBottom: 12 }}>Tea Items</h2>
             {teaItems.map((item) => (
-              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "12px 0", borderBottom: "1px solid #eee", paddingBottom: 8 }}>
+              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0", borderBottom: "1px solid #eee", paddingBottom: 6, fontSize: 15 }}>
                 <span>{item.name} <span style={{ color: "#888" }}>₹{item.price}</span></span>
                 <button
                   onClick={() => handleAddTea(item)}
@@ -819,37 +871,38 @@ const handleAddShake = (item) => {
                     background: "#007bff",
                     color: "#fff",
                     borderRadius: "50%",
-                    width: 32,
-                    height: 32,
+                    width: 28,
+                    height: 28,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
                   }}
                 >
-                  <Plus size={20} />
+                  <Plus size={16} />
                 </button>
               </div>
             ))}
             <button
               onClick={() => setShowTeaItems(false)}
               style={{
-                marginTop: 16,
+                marginTop: 12,
                 background: "#eee",
                 border: "none",
                 borderRadius: 6,
-                padding: "8px 16px",
-                cursor: "pointer"
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontSize: 14
               }}
             >
               Back to Categories
             </button>
           </div>
         ) : showSodaItems ? (
-          <div style={{ width: "100%", maxWidth: 400 }}>
-            <h2>Soda</h2>
+          <div style={{ width: "100%", maxWidth: 320, padding: "8px 0" }}>
+            <h2 style={{ fontSize: 20, marginBottom: 12 }}>Soda</h2>
             {sodaItems.map((item) => (
-              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "12px 0", borderBottom: "1px solid #eee", paddingBottom: 8 }}>
+              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0", borderBottom: "1px solid #eee", paddingBottom: 6, fontSize: 15 }}>
                 <span>{item.name} <span style={{ color: "#888" }}>₹{item.price}</span></span>
                 <button
                   onClick={() => handleAddSoda(item)}
@@ -858,37 +911,38 @@ const handleAddShake = (item) => {
                     background: "#007bff",
                     color: "#fff",
                     borderRadius: "50%",
-                    width: 32,
-                    height: 32,
+                    width: 28,
+                    height: 28,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
                   }}
                 >
-                  <Plus size={20} />
+                  <Plus size={16} />
                 </button>
               </div>
             ))}
             <button
               onClick={() => setShowSodaItems(false)}
               style={{
-                marginTop: 16,
+                marginTop: 12,
                 background: "#eee",
                 border: "none",
                 borderRadius: 6,
-                padding: "8px 16px",
-                cursor: "pointer"
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontSize: 14
               }}
             >
               Back to Categories
             </button>
           </div>
         ) : showMatkaBeverages ? (
-          <div style={{ width: "100%", maxWidth: 400 }}>
-            <h2>Matka Beverages</h2>
+          <div style={{ width: "100%", maxWidth: 320, padding: "8px 0" }}>
+            <h2 style={{ fontSize: 20, marginBottom: 12 }}>Matka Beverages</h2>
             {matkaBeverages.map((item) => (
-              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "12px 0", borderBottom: "1px solid #eee", paddingBottom: 8 }}>
+              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0", borderBottom: "1px solid #eee", paddingBottom: 6, fontSize: 15 }}>
                 <span>{item.name} <span style={{ color: "#888" }}>₹{item.price}</span></span>
                 <button
                   onClick={() => handleAddMatka(item)}
@@ -897,37 +951,38 @@ const handleAddShake = (item) => {
                     background: "#007bff",
                     color: "#fff",
                     borderRadius: "50%",
-                    width: 32,
-                    height: 32,
+                    width: 28,
+                    height: 28,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
                   }}
                 >
-                  <Plus size={20} />
+                  <Plus size={16} />
                 </button>
               </div>
             ))}
             <button
               onClick={() => setShowMatkaBeverages(false)}
               style={{
-                marginTop: 16,
+                marginTop: 12,
                 background: "#eee",
                 border: "none",
                 borderRadius: 6,
-                padding: "8px 16px",
-                cursor: "pointer"
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontSize: 14
               }}
             >
               Back to Categories
             </button>
           </div>
-        ) : showSummerSpecials ? (
-          <div style={{ width: "100%", maxWidth: 400 }}>
-            <h2>Summer Special</h2>
-            {summerSpecials.map((item) => (
-              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "12px 0", borderBottom: "1px solid #eee", paddingBottom: 8 }}>
+        ) : showSpecialDessertItems ? ( // <-- changed here
+          <div style={{ width: "100%", maxWidth: 320, padding: "8px 0" }}>
+            <h2 style={{ fontSize: 20, marginBottom: 12 }}>Special Dessert Item</h2>
+            {specialDessertItems.map((item) => (
+              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0", borderBottom: "1px solid #eee", paddingBottom: 6, fontSize: 15 }}>
                 <span>{item.name} <span style={{ color: "#888" }}>₹{item.price}</span></span>
                 <button
                   onClick={() => handleAddSummer(item)}
@@ -936,37 +991,38 @@ const handleAddShake = (item) => {
                     background: "#007bff",
                     color: "#fff",
                     borderRadius: "50%",
-                    width: 32,
-                    height: 32,
+                    width: 28,
+                    height: 28,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
                   }}
                 >
-                  <Plus size={20} />
+                  <Plus size={16} />
                 </button>
               </div>
             ))}
             <button
-              onClick={() => setShowSummerSpecials(false)}
+              onClick={() => setShowSpecialDessertItems(false)}
               style={{
-                marginTop: 16,
+                marginTop: 12,
                 background: "#eee",
                 border: "none",
                 borderRadius: 6,
-                padding: "8px 16px",
-                cursor: "pointer"
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontSize: 14
               }}
             >
               Back to Categories
             </button>
           </div>
         ) : showMocktailItems ? (
-          <div style={{ width: "100%", maxWidth: 400 }}>
-            <h2>Mocktails</h2>
+          <div style={{ width: "100%", maxWidth: 320, padding: "8px 0" }}>
+            <h2 style={{ fontSize: 20, marginBottom: 12 }}>Mocktails</h2>
             {mocktailItems.map((item) => (
-              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "12px 0", borderBottom: "1px solid #eee", paddingBottom: 8 }}>
+              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0", borderBottom: "1px solid #eee", paddingBottom: 6, fontSize: 15 }}>
                 <span>{item.name} <span style={{ color: "#888" }}>₹{item.price}</span></span>
                 <button
                   onClick={() => handleAddMocktail(item)}
@@ -975,37 +1031,38 @@ const handleAddShake = (item) => {
                     background: "#007bff",
                     color: "#fff",
                     borderRadius: "50%",
-                    width: 32,
-                    height: 32,
+                    width: 28,
+                    height: 28,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
                   }}
                 >
-                  <Plus size={20} />
+                  <Plus size={16} />
                 </button>
               </div>
             ))}
             <button
               onClick={() => setShowMocktailItems(false)}
               style={{
-                marginTop: 16,
+                marginTop: 12,
                 background: "#eee",
                 border: "none",
                 borderRadius: 6,
-                padding: "8px 16px",
-                cursor: "pointer"
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontSize: 14
               }}
             >
               Back to Categories
             </button>
           </div>
         ) : showShakeItems ? (
-          <div style={{ width: "100%", maxWidth: 400 }}>
-            <h2>Shakes</h2>
+          <div style={{ width: "100%", maxWidth: 320, padding: "8px 0" }}>
+            <h2 style={{ fontSize: 20, marginBottom: 12 }}>Shakes</h2>
             {shakeItems.map((item) => (
-              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "12px 0", borderBottom: "1px solid #eee", paddingBottom: 8 }}>
+              <div key={item.name} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "8px 0", borderBottom: "1px solid #eee", paddingBottom: 6, fontSize: 15 }}>
                 <span>{item.name} <span style={{ color: "#888" }}>₹{item.price}</span></span>
                 <button
                   onClick={() => handleAddShake(item)}
@@ -1014,27 +1071,28 @@ const handleAddShake = (item) => {
                     background: "#007bff",
                     color: "#fff",
                     borderRadius: "50%",
-                    width: 32,
-                    height: 32,
+                    width: 28,
+                    height: 28,
                     cursor: "pointer",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center"
                   }}
                 >
-                  <Plus size={20} />
+                  <Plus size={16} />
                 </button>
               </div>
             ))}
             <button
               onClick={() => setShowShakeItems(false)}
               style={{
-                marginTop: 16,
+                marginTop: 12,
                 background: "#eee",
                 border: "none",
                 borderRadius: 6,
-                padding: "8px 16px",
-                cursor: "pointer"
+                padding: "6px 12px",
+                cursor: "pointer",
+                fontSize: 14
               }}
             >
               Back to Categories

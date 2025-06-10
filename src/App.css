@@ -1,4 +1,21 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
+  background-color: hsl(189, 57%, 73%); /* Changed background color */
+}
+
+@media (max-width: 600px) {
+  .cart-dropdown {
+    position: fixed !important;
+    top: 60px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: 96vw !important;
+    max-width: 340px !important;
+    min-width: 240px !important;
+    padding: 16px 8px !important;
+    box-sizing: border-box !important;
+    z-index: 1000 !important;
+  }
 }
